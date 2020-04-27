@@ -31,20 +31,20 @@ Z_new = deval(sol,0:dt:dt*nt);
 X_sparse = Z_new(1:n,:);
 Y_sparse = Z_new(n+1:end,:);
 
-function A = adj_matrix(N,K,x,y)
-%% Adjacency Matrix - Aditya Nair, Kunihiko Taira
-%Input: %N :Number of point vortices
-%K      :Strength of vortices
-%x,y    : Cordinates of vortices
-%Output :%A :Adjacency Matrix
-A = zeros(N,N);
-for i = 1:N
-    for j = 1:N
-        if i~=j
-            r  = sqrt((x(i)-x(j))^2 + (y(i)-y(j))^2);  
-            A(i,j) = 0.5*(abs(K(i))+abs(K(j)))*(1/r);
-        else
-            A(i,j) = 0;
-        end
-    end
-end
+% function A = adj_matrix(N,K,x,y)
+% %% Adjacency Matrix - Aditya Nair, Kunihiko Taira
+% %Input: %N :Number of point vortices
+% %K      :Strength of vortices
+% %x,y    : Cordinates of vortices
+% %Output :%A :Adjacency Matrix
+% A = zeros(N,N);
+% for i = 1:N
+%     for j = 1:N
+%         if i~=j
+%             r  = sqrt((x(i)-x(j))^2 + (y(i)-y(j))^2);  
+%             A(i,j) = 0.5*(abs(K(i))+abs(K(j)))*(1/r);
+%         else
+%             A(i,j) = 0;
+%         end
+%     end
+% end

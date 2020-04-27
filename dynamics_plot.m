@@ -3,7 +3,7 @@
 function dynamics_plot(X,Y,X_org,Y_org,X_sparse,Y_sparse,nt,nvc,nc)
 
 LW = 'LineWidth'; CL = 'Color'; MCL = 'MarkerFaceColor';
-cmap = hot(1.5*nc);
+cmap = hsv(nc);
 Xm = mean(X);Ym = mean(Y);
 r_macro = mean(sqrt((X-Xm).^2+(Y-Ym).^2));
 X_org = [X X_org(:,1:nt)];X_org = (X_org-Xm)/r_macro;

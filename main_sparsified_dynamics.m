@@ -10,7 +10,7 @@ figure(1);
 drawnow
 K      = 0.1 + 0.01*randn(size(X)); % setup vortex strengths
 dt     = 0.01;                 % time step 
-nt     = 100;                 % number of time stamps
+nt     = 500;                 % number of time stamps
 
 %% Run original dynamics
 tic
