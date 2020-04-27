@@ -14,53 +14,22 @@ function [X_sparse,Y_sparse,A_sparse] = sparsified_dynamics(X,Y,K,epsilon,dt,nt)
 
 %% Setup sparsification
 
-global rho;
+%global rho;
 n             = length(X);
-z0            = [X;Y;K];              % Array of co-ordinates/strengths
-A             = adj_matrix(n,K,X,Y);% Set adjacency matrix
+%z0            = [X;Y;K];              % Array of co-ordinates/strengths
+%A             = adj_matrix(n,K,X,Y);% Set adjacency matrix
+A = sqrt(K.*K.')./abs((X-X.')+1i*(Y-Y.')); % Define adjacency matrix
+A(logical(eye(n))) = 0; % Remove diagonal entries of adjacency matrix
 [A_sparse,~]  = sparsify_spectral(A,epsilon); % spectral sparsification
-rho           = A_sparse./A;                  % sparsification ratio
+W           = A_sparse./A;                  % sparsification ratio
 
 %% Run sparsified-dynamics model
 
-X_sparse      = zeros(n,nt+1);           % X-cordinate frames
-Y_sparse      = zeros(n,nt+1);           % Y-cordinate frames
-X_sparse(:,1) = X; 
-Y_sparse(:,1) = Y;
-for m = 2:nt+1
-    [~,z]         = ode45(@biot_savart,[0,dt],z0);
-    x             = z(end,1:n)';
-    y             = z(end,n+1:2*n)';
-    X_sparse(:,m) = x;
-    Y_sparse(:,m) = y;
-    z0 = [x;y;K];
-end
-
-function [dzdt] = biot_savart(t,z)
-%% (Sparsified) Biot-savart law
-global rho;
-n     = length(z)/3;             
-x     = z(1:n);
-y     = z(n+1:2*n);
-kappa = z(2*n+1:end);  
-u     = zeros(size(x));
-v     = zeros(size(y));
-for j = 1:n
-    for k = 1:n
-        if ((j~=k) && rho(j,k)~=0)
-            dx = x(j)-x(k);
-            dy = y(j)-y(k);
-            r2 = dx^2 + dy^2;
-            u(j) = u(j) + rho(j,k)*kappa(k)*dy/r2;
-            v(j) = v(j) + rho(j,k)*kappa(k)*dx/r2;
-        end
-    end
-end
-u      = -u/(2*pi);
-v      =  v/(2*pi);
-dkappa = zeros(size(x));
-dzdt   = [u;v;dkappa];
-
+biotfun = @(t,z) biot_savart(z,K,W);
+sol = ode45(biotfun,[0,nt*dt],[X;Y]);
+Z_new = deval(sol,0:dt:dt*nt);
+X_sparse = Z_new(1:n,:);
+Y_sparse = Z_new(n+1:end,:);
 
 function A = adj_matrix(N,K,x,y)
 %% Adjacency Matrix - Aditya Nair, Kunihiko Taira

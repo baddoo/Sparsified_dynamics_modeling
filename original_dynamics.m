@@ -12,41 +12,10 @@ function [X_org,Y_org] = original_dynamics(X,Y,K,dt,nt)
 
 
 %% Run biot-savart model
-n          = length(X);
-z0         = [X;Y;K];              % Array of co-ordinates/strengths
-X_org      = zeros(n,nt+1);           % X-cordinate frames
-Y_org      = zeros(n,nt+1);           % Y-cordinate frames
-X_org(:,1) = X; 
-Y_org(:,1) = Y;
-for m = 2:nt+1
-    [~,z]         = ode45(@biot_savart,[0,dt],z0);
-    x             = z(end,1:n)';
-    y             = z(end,n+1:2*n)';
-    X_org(:,m)    = x;
-    Y_org(:,m)    = y;
-    z0            = [x;y;K];
-end
-
-function [dzdt] = biot_savart(t,z)
-%% Biot-savart law
-n     = length(z)/3;             
-x     = z(1:n);
-y     = z(n+1:2*n);
-kappa = z(2*n+1:end);  
-u     = zeros(size(x));
-v     = zeros(size(y));
-for j = 1:n
-    for k = 1:n
-        if (j~=k)
-            dx = x(j)-x(k);
-            dy = y(j)-y(k);
-            r2 = dx^2 + dy^2;
-            u(j) = u(j) + kappa(k)*dy/r2;
-            v(j) = v(j) + kappa(k)*dx/r2;
-        end
-    end
-end
-u      = -u/(2*pi);
-v      =  v/(2*pi);
-dkappa = zeros(size(x));
-dzdt   = [u;v;dkappa];
+n = length(X);
+W = ones(n);
+biotfun = @(t,z) biot_savart(z,K,W);
+sol = ode45(biotfun,[0,nt*dt],[X;Y]);
+Z_new = deval(sol,0:dt:dt*nt);
+X_org = Z_new(1:n,:);
+Y_org = Z_new(n+1:end,:);
