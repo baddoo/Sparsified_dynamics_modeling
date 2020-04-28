@@ -15,7 +15,10 @@ function [X_org,Y_org] = original_dynamics(X,Y,K,dt,nt)
 n = length(X);
 W = ones(n);
 biotfun = @(t,z) biot_savart(z,K,W);
+biotfun = @(t,z) biot_savart_3d(z,K,W);
+
 sol = ode45(biotfun,[0,nt*dt],[X;Y]);
+
 Z_new = deval(sol,0:dt:dt*nt);
 X_org = Z_new(1:n,:);
 Y_org = Z_new(n+1:end,:);

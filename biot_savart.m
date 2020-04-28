@@ -7,7 +7,7 @@ function dzdt = biot_savart(z,K,W)
 n = numel(K);
 
 x = z(1:n); y = z(n+1:end);
-dx = x - x.'; dy = y - y.';
+dx = x - x'; dy = y - y';
 r2 = dx.^2 + dy.^2;
 
 BSmatX = W.*dx./r2; BSmatX(logical(eye(n)))=0;
