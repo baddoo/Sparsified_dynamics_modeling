@@ -48,7 +48,7 @@ Xvorts = Xcent + asin(spread*(-1+2*rand(nvc,nc)));
 Yvorts = Ycent + spread*pi/2*(1-2*rand(nvc,nc));
 
 % Generate circulations
-K = randfixedsum(nvc*nc,1,0,-.1,.1); % On the sphere the circulations must sum to zero
+K = randfixedsum(nvc*nc,1,0,-.05,.05); % On the sphere the circulations must sum to zero
 
 % Reshape vortex positions into a long vector 
 X = reshape(Xvorts,nc*nvc,[]);

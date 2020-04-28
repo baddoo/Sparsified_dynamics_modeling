@@ -13,7 +13,7 @@ elseif dim ==3
     thet = X; phi = Y;
     l2 = 2*(1 - cos(thet)*cos(thet') - sin(thet).*sin(thet.').*cos(phi - phi.')); % Square of chord distance between vortices
     A = sqrt(abs(K.*K.'))./sqrt(l2); 
-    A = (abs(K)+abs(K.'))./sqrt(l2); 
+    %A = (abs(K)+abs(K.'))./sqrt(l2); 
 end
 A(logical(eye(n))) = 0; % Remove diagonal entries of adjacency matrix
 
@@ -23,7 +23,7 @@ tic
 disp(['The sparsification took ', num2str(toc)])
 
 % Define sparsification ratio
-W = sparse(AS./A);
+W = sparse(AS./A); 
 
 % Plot adjacency matrix and sparsified matrix
 subplot(1,2,1);
