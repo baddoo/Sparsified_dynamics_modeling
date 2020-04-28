@@ -1,4 +1,4 @@
-function [X_org,Y_org] = original_dynamics(X,Y,K,dt,nt)
+function [X_org,Y_org] = original_dynamics(X,Y,K,tend,dim)
 
 %% Inputs
 % X : initial x-cordinate of point vortices
@@ -14,11 +14,15 @@ function [X_org,Y_org] = original_dynamics(X,Y,K,dt,nt)
 %% Run biot-savart model
 n = length(X);
 W = ones(n);
-biotfun = @(t,z) biot_savart(z,K,W);
+
+if dim == 2
+biotfun = @(t,z) biot_savart_2d(z,K,W);
+elseif dim ==3
 biotfun = @(t,z) biot_savart_3d(z,K,W);
+end
 
-sol = ode45(biotfun,[0,nt*dt],[X;Y]);
+sol = ode45(biotfun,[0,tend],[X;Y]);
 
-Z_new = deval(sol,0:dt:dt*nt);
+Z_new = deval(sol,linspace(0,tend));
 X_org = Z_new(1:n,:);
 Y_org = Z_new(n+1:end,:);
