@@ -11,7 +11,7 @@ function [X_org,Y_org] = original_dynamics(X,Y,K,tend,dim)
 % X_org, Y_org: trajectories of vortices
 
 
-%% Run biot-savart model
+%% Run full Biot–Savart model
 n = length(X);
 W = ones(n);
 
@@ -23,6 +23,6 @@ end
 
 sol = ode45(biotfun,[0,tend],[X;Y]);
 
-Z_new = deval(sol,linspace(0,tend));
+Z_new = deval(sol,linspace(0,tend,1e3));
 X_org = Z_new(1:n,:);
 Y_org = Z_new(n+1:end,:);

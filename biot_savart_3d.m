@@ -1,6 +1,6 @@
 %% Biot-Savart
 %
-% Computes the Biot-Savart law
+% Computes the Biot-Savart law in 3D
 
 function dzdt = biot_savart_3d(z,K,W)
 

@@ -1,16 +1,4 @@
-function [X_sparse,Y_sparse,AS] = sparsified_dynamics(X,Y,K,tend,dim,epsilon)
-
-%% Inputs
-% X : initial x-cordinate of point vortices
-% Y : initial x-cordinate of point vortices
-% K : strength of point vortices
-% epsilon: sparsification order
-% dt : time step
-% nt : number of time steps
-
-%% Outputs
-% X_sparse, Y_sparse: sparse trajectories of vortices
-% A_sparse : sparse adjacency matrix
+function [XS,YS,AS] = sparsified_dynamics(X,Y,K,tend,dim,epsilon)
 
 %% Setup sparsification
 
@@ -25,6 +13,7 @@ elseif dim ==3
     thet = X; phi = Y;
     l2 = 2*(1 - cos(thet)*cos(thet') - sin(thet).*sin(thet.').*cos(phi - phi.')); % Square of chord distance between vortices
     A = sqrt(abs(K.*K.'))./sqrt(l2); 
+    A = (abs(K)+abs(K.'))./sqrt(l2); 
 end
 A(logical(eye(n))) = 0; % Remove diagonal entries of adjacency matrix
 
@@ -34,7 +23,7 @@ tic
 disp(['The sparsification took ', num2str(toc)])
 
 % Define sparsification ratio
-W = AS./A;
+W = sparse(AS./A);
 
 % Plot adjacency matrix and sparsified matrix
 subplot(1,2,1);
@@ -60,6 +49,6 @@ tic
 sol = ode45(biotfun,[0,tend],[X;Y]);
 disp(['The sparsified dynamics took ' num2str(toc)])
 
-Z_new = deval(sol,linspace(0,tend));
-X_sparse = Z_new(1:n,:);
-Y_sparse = Z_new(n+1:end,:);
+Z_new = deval(sol,linspace(0,tend,1e3));
+XS = Z_new(1:n,:);
+YS = Z_new(n+1:end,:);
